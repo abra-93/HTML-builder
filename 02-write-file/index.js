@@ -1,10 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const { stdin, stdout, exit } = process;
-
 let newFile = fs.createWriteStream(path.resolve(__dirname, 'text.txt'));
 
-stdout.write('Введите текст:\n');
+stdout.write(['\x1b[36m', 'Введите текст:\n', '\033[0m'].join(''));
 
 stdin.on('data', (data) => {
   if (data.toString().trim() === 'exit') {
@@ -14,8 +13,11 @@ stdin.on('data', (data) => {
   }
 });
 
-process.on('exit', () => stdout.write('Удачи в изучении Node.js!'));
+process.on('exit', () => messageExit());
 process.on('SIGINT', () => {
   exit();
-  stdout.write('Удачи в изучении Node.js!');
+  stdout.write(() => messageExit());
 });
+
+const messageExit = () =>
+  stdout.write(['\x1b[31m', 'Удачи в изучении Node.js!', '\033[0m'].join(''));
